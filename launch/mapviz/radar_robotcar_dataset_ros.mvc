@@ -1,0 +1,50 @@
+capture_directory: ~
+fixed_frame: map
+target_frame: SPAN-CPT
+fix_orientation: false
+rotate_90: false
+enable_antialiasing: true
+show_displays: true
+show_status_bar: true
+show_capture_tools: true
+window_width: 1853
+window_height: 1025
+view_scale: 1.535561
+offset_x: 0
+offset_y: 0
+use_latest_transforms: true
+background: "#ffffff"
+displays:
+  - type: mapviz_plugins/tile_map
+    name: new display
+    config:
+      visible: true
+      collapsed: false
+      custom_sources:
+        []
+      bing_api_key: ""
+      source: Stamen (terrain)
+  - type: mapviz_plugins/navsat
+    name: new display
+    config:
+      visible: true
+      collapsed: false
+      topic: /oxford/ins/gps
+      color: "#00ff00"
+      draw_style: lines
+      position_tolerance: 10
+      buffer_size: 0
+  - type: mapviz_plugins/image
+    name: new display
+    config:
+      visible: true
+      collapsed: false
+      topic: ""
+      anchor: top left
+      units: pixels
+      offset_x: 0
+      offset_y: 0
+      width: 320
+      height: 240
+      keep_ratio: false
+      image_transport: default
