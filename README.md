@@ -41,8 +41,8 @@ The Oxford Radar RobotCar Dataset is a radar extension to The Oxford RobotCar Da
 Before compiling this project, make sure that the relevant data of all sensors are in the above figure. **If you only use some of them, you should comment on the code related to sensors not included in the main function (see src/Oxford_Sensors.cpp).** 
 
 ```bash
-mkdir -p /radar-robotcar-dataset-ros/src
-cd /radar-robotcar-dataset-ros/src
+mkdir -p radar-robotcar-dataset-ros/src
+cd radar-robotcar-dataset-ros/src
 git clone -b ros1 https://github.com/Rongxi-Zhang/radar-robotcar-dataset-ros.git
 cd ..
 rosdep install src --from-paths -i -y
