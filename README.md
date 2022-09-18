@@ -28,6 +28,7 @@
 <div align=center>
 	<img src = assets/RobotCarPlayer.png />
 </div>
+
 :one: Any sensor can be loaded dynamically.  
 :two: Support single and multi-sensor modes.  
 :three: Support switching between two datasets.  
@@ -80,7 +81,7 @@ Don't forget to cite RobotCarPlayer in your publications if RobotCarPlayer helps
 ```
 Or, a **footnote** is appreciated: **`github.com/Rongxi-Zhang/radar-robotcar-dataset-ros`**.
 
-If you use RobotCarPlayer in your academic work, please also cite the **official** [paper](https://ieeexplore.ieee.org/document/9196884).  
+If you use RobotCarPlayer in your academic work, please also cite the official [paper](https://ieeexplore.ieee.org/document/9196884).  
 
 ## Operation Results :tv: 
 
@@ -89,6 +90,7 @@ If you use RobotCarPlayer in your academic work, please also cite the **official
 <center>
 	<img src="assets/rqt.gif">
 </center>  
+
 **rviz2:**
 
 <center>
@@ -105,6 +107,6 @@ If you use RobotCarPlayer in your academic work, please also cite the **official
 *If you have any questions just get in touch or you can create an issuse.*  
 *And If you want to cooperate with me to improve this work, please also contact me.*  
 
-As a millimeter-wave radar researcher, I will publish some work on radar in the future. Your attention is welcome. 
+As a millimeter-wave radar researcher, I will publish some work on radar data processing in the future. Your attention is welcome. 
 
 :e-mail:	rongxizhangcar@gmail.com
