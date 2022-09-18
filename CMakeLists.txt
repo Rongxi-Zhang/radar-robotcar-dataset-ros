@@ -1,91 +1,114 @@
-cmake_minimum_required(VERSION 2.8.3)
-project(radar_robotcar_dataset_ros)
+cmake_minimum_required(VERSION 3.5)
+project(radar_robotcar_dataset_ros2)
 
-IF(NOT CMAKE_BUILD_TYPE)
-    SET(CMAKE_BUILD_TYPE Release)
-ENDIF()
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-MESSAGE("Build type: " ${CMAKE_BUILD_TYPE})
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
-set(CMAKE_BUILD_TYPE "Release")
-set(CMAKE_CXX_FLAGS "-std=c++14")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall -g")
-
-find_package(catkin REQUIRED COMPONENTS
-  rospy
-  roscpp
-  std_msgs
-  geometry_msgs
-  nav_msgs
-  tf
-  cv_bridge
-  camera_models
-  image_transport
-  pcl_ros
-  pcl_conversions
-  message_generation
-)
-
-set_target_properties(${TARGET} PROPERTIES
-COMPILE_FLAGS "-pthread"
-LINK_FLAGS "-pthread")
-
-find_package(OpenCV REQUIRED)
-if(NOT OpenCV_FOUND)
-  message(FATAL_ERROR "OpenCV  not found.")
+# Default to C99
+if(NOT CMAKE_C_STANDARD)
+  set(CMAKE_C_STANDARD 99)
 endif()
-MESSAGE(STATUS "OPENCV VERSION: ${OpenCV_VERSION}")
 
-find_package(Eigen3)
-if(NOT EIGEN3_INCLUDE_DIR)
-  message(FATAL_ERROR "Eigen3  not found.")
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
 endif()
-MESSAGE(status "EIGEN3_INCLUDE_DIR: ${EIGEN3_INCLUDE_DIR}")
 
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# find dependencies
+find_package(ament_cmake REQUIRED)
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  # the following line skips the linter which checks for copyrights
+  # uncomment the line when a copyright and license is not present in all source files
+  #set(ament_cmake_copyright_FOUND TRUE)
+  # the following line skips cpplint (only works in a git repo)
+  # uncomment the line when this package is not in a git repo
+  #set(ament_cmake_cpplint_FOUND TRUE)
+
+  ament_lint_auto_find_test_dependencies()
+endif()
+
+# Added content
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(gps_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(cv_bridge REQUIRED)
 find_package(PCL REQUIRED)
-MESSAGE(status "PCL_INCLUDE_DIR: ${PCL_INCLUDE_DIR}")
+find_package(Eigen3 REQUIRED)
+find_package(Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
+find_package(Boost REQUIRED COMPONENTS thread)
+find_package(OpenCV 4.6.0 REQUIRED) #ros foxy default 4.2.0
 
+set(dependencies
+  "rclcpp"
+  "rclcpp_components"
+  "geometry_msgs"
+  "sensor_msgs"
+  "gps_msgs"
+  "nav_msgs"
+  "std_msgs"
+  "std_srvs"
+  "tf2_ros"
+  "cv_bridge"
+  Boost
+)
 
 include_directories(
-  ${catkin_INCLUDE_DIRS} 
-  ${CERES_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIR}
-  ${PCL_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/include
-  )
-
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
-
-add_message_files(
-  FILES
-  Gps.msg
-  Ins.msg
+  ${PROJECT_SOURCE_DIR}/gui
+  ${PCL_INCLUDE_DIRS}
+  ${Qt5Widgets_INCLUDE_DIRS}
 )
 
-generate_messages(
-  DEPENDENCIES
-  geometry_msgs
-  sensor_msgs
+set(TS_FILES gui/RobotCarPlayer_en_US.ts)
+set(QRC_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/image.qrc)
+qt5_add_resources(QRC_FILES ${QRC_SOURCE_FILES})
+qt5_wrap_cpp(HEADER_SRC 
+  include/${PROJECT_NAME}/robotcarplayer.h
+  include/${PROJECT_NAME}/rclthread.hpp
 )
 
-catkin_package(
-  LIBRARIES oxford_image
-  CATKINDEPENDS std_msgs roscpp
+add_executable(RobotCarPlayer
+  src/main.cpp
+  src/robotcarplayer.cpp
+  src/robotcarplayer.ui
+  src/rclthread.cpp
+  ${TS_FILES}
+  ${QRC_FILES}
+  ${HEADER_SRC}
 )
 
-add_library(${PROJECT_NAME} SHARED
-  src/oxford_sensor.cpp
-  include/oxford_sensor.h
+ament_target_dependencies(RobotCarPlayer
+  ${dependencies}
 )
 
-target_link_libraries(${PROJECT_NAME}
-  ${catkin_LIBRARIES} 
-  ${OpenCV_LIBS} 
-  ${CERES_LIBRARIES}
-  ${CMAKE_THREAD_LIBS_INIT}
+target_link_libraries(RobotCarPlayer 
+  Qt5::Widgets
   ${PCL_LIBRARIES}
-  )
+)
 
-add_executable(oxford_sensors src/OxFord_Sensors.cpp)
-target_link_libraries(oxford_sensors ${PROJECT_NAME})
+install(TARGETS RobotCarPlayer
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}
+)
+
+qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
+
+ament_package()

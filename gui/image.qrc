@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>robotcar0.png</file>
+        <file>robotcar.png</file>
+        <file>scan.ico</file>
+        <file>play.ico</file>
+        <file>stop.ico</file>
+        <file>pause.ico</file>
+    </qresource>
+</RCC>

@@ -1,97 +1,110 @@
-# radar-robotcar-dataset-ros ![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6523322.svg)
-### ROS1 Interface of the Oxford Radar RobotCar Dataset
 
-*I'm glad to be provided access to download the full dataset. This interface is my first work on this dataset because I usually use ROS for research. This work is based on **ROS1** Melodic/Noetic.*
+# RobotCarPlayer [![License](https://img.shields.io/static/v1?label=License&message=GPLv3&color=green)](http://www.gnu.org/licenses/gpl-3.0.html)
+### ROS2 Interface of the Oxford (Radar) RobotCar Dataset
 
-The Oxford Radar RobotCar Dataset is a radar extension to The Oxford RobotCar Dataset. We provide data from a **Navtech CTS350-X Millimetre-Wave FMCW radar** and **Dual Velodyne HDL-32E LIDARs** with **optimised ground truth radar odometry** for **280 km of driving around Oxford, UK** (in addition to all sensors in the original [Oxford RobotCar Dataset](https://robotcar-dataset.robots.ox.ac.uk/)).  
+*RobotCarPlayer converts the original data from the [Oxford RobotCar Dataset](https://robotcar-dataset.robots.ox.ac.uk/) and the [Oxford Radar RobotCar Dataset](https://oxford-robotics-institute.github.io/radar-robotcar-dataset/)  to topic messages of **ROS2** and publishes them. The player is based on **ROS2** and **QT5**, and written in pure **C++**, which is different from the Matlab and Python scripts in the original [robotcar-dataset-sdk](https://github.com/ori-mrg/robotcar-dataset-sdk). If you do not use **ROS2** but want to read the original data through **C++**, this work is also a good reference.*
 
-**The official dataset and SDK are here:**  
-[radar-robotcar-dataset-sdk](https://github.com/oxford-robotics-institute/radar-robotcar-dataset-sdk)  
-[Oxford Radar RobotCar Dataset](https://oxford-robotics-institute.github.io/radar-robotcar-dataset/)
+*This work has been tested on **ROS2 Foxy**.*  
+*I believe it can also operate well on the future **[ROS](https://www.ros.org/)** :turtle:.*  
 
-## Sensor Suite
-<div align=center>
-<img src = pictures/radar-robotcar.png width="450" height="450" />
-</div>
 
-**Cameras:**  
-1 x Point Grey Bumblebee XB3  
-3 x Point Grey Grasshopper2  
-
-**LiDAR:**  
-2 x SICK LMS-151 2D LIDAR  
-
-**GPS/INS:**  
-1 x NovAtel SPAN-CPT ALIGN inertial and GPS navigation system  
-
-**Radar:**  
-1 x Navtech CTS350-X - Mounted in the centre of the roof aligned with the vehicles axes.  
-
-**LiDAR:**  
-2 x Velodyne HDL-32E - Mounted to the left and right of the Navtech CTS350-X radar.
-
-**This ROS1 interface doesn't contain 2D LIDARs so far.**
+## Sensor Suite :car:
 
 <div align=center>
-<img src = pictures/dataset-directory.png width="450" height="350" />
+	<img src = assets/RobotCar.png />
+
+| **Sensor** | Oxford RobotCar Dataset | Oxford Radar RobotCar Dataset |
+| :----: | :----: | :----: |
+| Stereo Camera | 1 x Point Grey Bumblebee XB3 | same |
+| Mono Camera | 3 x Point Grey Grasshopper2 | same |
+| 2D LiDAR | 2 x SICK LMS-151 2D LiDAR | same |
+| GPS/INS | 1 x NovAtel SPAN-CPT | same |
+| 3D LiDAR | 1 x SICK LD-MRS 3D LiDAR | 2 x Velodyne HDL-32E |
+| mmWave Radar | no | 1 x Navtech CTS350-X |
+
 </div>
 
-## ROS1 Build
+## Basic Features :book:
+<div align=center>
+	<img src = assets/RobotCarPlayer.png />
+</div>
+:one: Any sensor can be loaded dynamically.  
+:two: Support single and multi-sensor modes.  
+:three: Support switching between two datasets.  
+:four: Support the use of the slider to drag the playback point position.  
+:five: It can dynamically remove or not remove the distortion of all camera images.  
+:six: The stereo camera can be dynamically switched between the wide mode and narrow mode.  
+:seven: For the GPS/INS, this player publishes GPS and UTM odometry topics at the same time.  
+:eight: In multi-sensor mode, all sensors have played synchronously according to their timestamps.  
+:nine: *Continuous updating ...*
 
-Before compiling this project, make sure that the relevant data of all sensors are in the above figure. **If you only use some of them, you should comment on the code related to sensors not included in the main function (see src/Oxford_Sensors.cpp).** 
-
+## ROS2 Build :computer:
+This work has been tested on **Ubuntu 20.04 LTS**.  
 ```bash
-mkdir -p radar-robotcar-dataset-ros/src
-cd radar-robotcar-dataset-ros/src
-git clone -b ros1 https://github.com/Rongxi-Zhang/radar-robotcar-dataset-ros.git
+mkdir -p radar_robotcar_dataset_ros2/src
+cd radar_robotcar_dataset_ros2/src
+git clone https://github.com/Rongxi-Zhang/radar-robotcar-dataset-ros.git
 cd ..
 rosdep install src --from-paths -i -y
-catkin_make install -DCATKIN_WHITELIST_PACKAGES="radar_robotcar_dataset_ros"
+colcon build --packages-select radar_robotcar_dataset_ros2
 source ./devel/setup.bash
 ```
 
-## ROS1 Launch
+If you want to build RobotCarPlayer on **Windows**, please refer to the following link: 
+[Building ROS 2 on Windows](https://docs.ros.org/en/foxy/Installation/Windows-Development-Setup.html)
 
-Please edit the launch file named **Oxford_Sensors.launch** under the launch folder. You can choose to save raw data as a rosbag or publish them directly. 
+## How to use :movie_camera:
 
-```xml
-<launch>
-    <!-- Offical SDK -->
-    <arg name="config_file" value=".../robotcar-dataset-sdk"/>
-    <!-- Dataset Path -->
-    <arg name="dataset_path" value=".../2019-01-10-14-36-48-radar-oxford-10k-partial"/>
-    <!-- Save flag: 0 No, 1 Yes -->
-    <arg name="save_flag" value="0"/>
-    <!-- Save Path -->
-    <arg name="save_path" value=".../2019-01-10-14-36-48-radar-oxford-10k-partial.bag" />
-	<!--The following is hidden-->
-</launch>
+```bash
+ros2 run radar_robotcar_dataset_ros2 RobotCarPlayer
 ```
-Then execute the command: 
-```shell
-roslaunch radar_robotcar_dataset_ros OxFord_Sensors.launch
+**[Then this video will tell you how to use this player.](https://youtu.be/LG4cgrkSddY)**  
+
+**And if you want to use the [mapviz-2.2.0](https://github.com/swri-robotics/mapviz):**
+
+```bash
+ros2 launch radar_robotcar_dataset_ros2 mapviz.launch.py
 ```
 
-## Operation Results
-**Topics:**
+## Citation :star: 
+Don't forget to cite RobotCarPlayer in your publications if RobotCarPlayer helps your research.  Your citation will be appreciated. **BibTeX** Entry:
+```bibtex
+@misc{robotcarplayer,
+  author = {Rongxi Zhang},
+  title = {RobotCarPlayer: ROS2 Interface of the Oxford (Radar) RobotCar Dataset},
+  year = {2022},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/Rongxi-Zhang/radar-robotcar-dataset-ros}},
+}
+```
+Or, a **footnote** is appreciated: **`github.com/Rongxi-Zhang/radar-robotcar-dataset-ros`**.
 
-<img src = pictures/robotcar-monitor.png width="720" height="402" />
+If you use RobotCarPlayer in your academic work, please also cite the **official** [paper](https://ieeexplore.ieee.org/document/9196884).  
 
+## Operation Results :tv: 
 
+**rqt:**
 
-**Rviz:**
+<center>
+	<img src="assets/rqt.gif">
+</center>  
+**rviz2:**
 
-![rviz](pictures/robotcar-rviz.gif)
+<center>
+	<img src="assets/rviz2.gif">
+</center>  
 
+**[mapviz](https://youtu.be/ojq7yk8xtKU):**
 
+<center>
+	<img src="assets/mapviz.gif">
+</center>  
 
-**[Mapviz](https://github.com/swri-robotics/mapviz):**
+*If you use **ROS1**, please refer to the old branch.*  
+*If you have any questions just get in touch or you can create an issuse.*  
+*And If you want to cooperate with me to improve this work, please also contact me.*  
 
-![mapviz](pictures/robotcar-mapviz.gif)
+As a millimeter-wave radar researcher, I will publish some work on radar in the future. Your attention is welcome. 
 
-
-
-~~*A new version based on **ROS2** Foxy will be released in the future. Because of the limited personal level, there are still some deficiencies and the need to improve the place, still, need to be perfect. I would appreciate it if you'd help me improve this project. If you have any questions just get in touch.*~~  
-*Coming soon~*
-rongxizhangcar@gmail.com
-
+:e-mail:	rongxizhangcar@gmail.com

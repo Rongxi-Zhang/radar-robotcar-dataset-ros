@@ -1,0 +1,79 @@
+capture_directory: "~"
+fixed_frame: map
+target_frame: SPAN-CPT
+fix_orientation: false
+rotate_90: false
+enable_antialiasing: true
+show_displays: true
+show_status_bar: true
+show_capture_tools: true
+window_width: 1144
+window_height: 904
+view_scale: 0.3186308
+offset_x: 1.233749
+offset_y: -0.8692323
+use_latest_transforms: true
+background: "#ffffff"
+image_transport: raw
+displays:
+  - type: mapviz_plugins/tile_map
+    name: new display
+    config:
+      visible: true
+      collapsed: false
+      custom_sources:
+        []
+      bing_api_key: AkXPglrvs_lKtefy0FPa04tM96ah4e09UYQQRqBssA6dp1e_XVhXmToSr7hB9KlI
+      source: Bing Maps (terrain)
+  - type: mapviz_plugins/navsat
+    name: GPS
+    config:
+      visible: true
+      collapsed: true
+      topic: /robotcar/ins/gps
+      color: "#ff1900"
+      draw_style: points
+      position_tolerance: 0
+      buffer_size: 0
+  - type: mapviz_plugins/odometry
+    name: UTM
+    config:
+      visible: true
+      collapsed: false
+      topic: /robotcar/ins/odom
+      color: "#00ff00"
+      draw_style: arrows
+      position_tolerance: 0
+      buffer_size: 0
+      show_laps: false
+      show_covariance: false
+      show_all_covariances: false
+      static_arrow_sizes: false
+      arrow_size: 37
+      show_timestamps: 0
+  - type: mapviz_plugins/image
+    name: Radar
+    config:
+      visible: true
+      collapsed: true
+      topic: /robotcar/radar/cart
+      anchor: top left
+      units: pixels
+      offset_x: 0
+      offset_y: 0
+      width: 300
+      height: 300
+      keep_ratio: false
+      image_transport: default
+  - type: mapviz_plugins/robot_image
+    name: car
+    config:
+      visible: true
+      collapsed: true
+      frame: SPAN-CPT
+      image: /home/rongxi/ROS_Workspace/Foxy/radar_robotcar_dataset_ros2/src/radar_robotcar_dataset_ros2/launch/mapviz/car.png
+      width: 5
+      height: 3.04
+      offset_x: 0
+      offset_y: 0
+      ratio: custom
